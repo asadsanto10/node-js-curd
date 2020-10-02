@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>node js</title>
+</head>
+<body>
+    <h1>i have a mongo database</h1>
+    <form action="/addProduct" method="post">
+        <input type="text" placeholder="Product name" name="pName"pName>
+        <input type="text" placeholder="Product Price" name="pPrice"pName>
+        <input type="text" placeholder="Product Quantity" name="pQuantity"pName>
+        <input type="submit" value="Add Product">
+    </form>
+    <!-- show product -->
+    <div id="product">
+        
+    </div>
+
+    <!-- update product show -->
+    <div id="update">
+
+    </div>
+
+    <script>
+        fetch('/products')
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            const container = document.getElementById('product');
+            data.forEach(product => {
+                const item = document.createElement('p');
+                item.innerHTML = `${product.pName} price: ${product.pPrice} quantity: ${product.pQuantity}
+                    <button onclick="updateProduct('${product._id}')">Update</button>
+                    <button onclick="delectProduct('${product._id}')">Delete</button>
+                `;
+                container.appendChild(item);
+            });
+        });
+
+        // delete
+        function delectProduct(id) { 
+            fetch(`/delete/${id}`, {
+                method: 'DELETE'
+            })
+            .then(res => res.json())
+            .then(result => {
+                console.log('deleted sucessfully');
+            })
+        }
+
+        // update product
+        function updateProduct(id){
+            fetch(`product/${id}`)
+            .then(result =>  result.json())
+            .then(data => {
+                const update = document.getElementById('update')
+                update.innerHTML = `
+                    <h3>Update: ${data._id}</h3>
+                    Product Name: <input type="text" value="${data.pName}"/></br>
+                    Product Price: <input type="text" value="${data.pPrice}"/></br>
+                    Product Quantity: <input type="text" value="${data.pQuantity}"/></br>
+                    <button >Update Product</button>
+                `;
+            })
+        }
+    </script>
+</body>
+</html>
